@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\ChirpController;
+use App\Http\Controllers\ChirpLikeController;
 use App\Http\Controllers\ProfileController;
+use App\Models\ChirpLike;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,6 +34,10 @@ Route::get('/dashboard', function () {
 
 Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy'])
+    ->middleware(['auth', 'verified']);
+
+Route::resource('chirplikes', ChirpLikeController::class)
+    ->only(['index','store'])
     ->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {

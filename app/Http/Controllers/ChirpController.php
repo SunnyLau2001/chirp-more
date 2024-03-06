@@ -17,7 +17,7 @@ class ChirpController extends Controller
     {
         return Inertia::render("Chirps/Index", [
             // chirps variable will inject to vue template
-            'chirps' => Chirp::with('user:id,name')->latest()->get(),
+            'chirps' => Chirp::with(['user:id,name', 'chirplikes.user:id,name'])->latest()->get(),
         ]); 
     }
 
@@ -37,7 +37,7 @@ class ChirpController extends Controller
         $validated = $request->validate([
             'message' => 'required|string|max:255',
         ]);
- 
+        
         $request->user()->chirps()->create($validated);
  
         return redirect(route('chirps.index'));

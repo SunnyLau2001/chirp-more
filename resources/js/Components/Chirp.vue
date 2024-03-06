@@ -15,11 +15,50 @@ dayjs.extend(relativeTime);
 // !Not the chirps from the controller
 const props = defineProps(["chirp"]);
 
+console.log(props.chirp);
+
 const form = useForm({
   message: props.chirp.message,
 });
 
 const editing = ref(false);
+
+const liking = ref(false);
+
+const handleLike = async (e) => {
+  liking = true;
+
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
+  try {
+    const response = await axios.post(
+      route("chirplikes.store"),
+      {
+        user_id: props.chirp.user_id,
+        chirp_id: props.chirp.id,
+      },
+      {
+        headers: {
+          "X-CSRF-TOKEN": csrfToken,
+        },
+      }
+    );
+  } catch {}
+
+  // likeForm.post(route("chirplikes.index"));
+};
+
+// function handleClick() {
+//   console.log("Liked!");
+//   console.log(`${props.chirp.id}`);
+//   console.log(`${props.chirp.user_id}`);
+
+//   likeForm.post();
+
+//   // router.post(route("chirplikes.index"), {});
+
+//   // fetch(route("chirplikes."));
+// }
 </script>
 
 <template>
@@ -113,5 +152,6 @@ const editing = ref(false);
         {{ chirp.message }}
       </p>
     </div>
+    <button @click="handleLike">Like</button>
   </div>
 </template>
