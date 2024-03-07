@@ -2,8 +2,9 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import { useForm, Head } from "@inertiajs/vue3";
+import { useForm, Head, usePage } from "@inertiajs/vue3";
 import Chirp from "@/Components/Chirp.vue";
+import { computed } from "vue";
 
 // Injected from the ChirpController when hitting the index route.
 defineProps(["chirps"]);
@@ -12,6 +13,15 @@ const form = useForm({
   message: "",
 });
 
+// Testing for access user data through inertiajs
+// You can access user data from here, or pass during accessing the controller
+const page = usePage();
+const user = computed(() => {
+  return {
+    id: page.props.auth.user.id,
+    name: page.props.auth.user.name,
+  };
+});
 </script>
 
 <template>
@@ -36,6 +46,7 @@ const form = useForm({
           v-for="chirp in chirps"
           :key="chirp.id"
           :chirp="chirp"
+          :user="user"
         />
       </div>
     </div>

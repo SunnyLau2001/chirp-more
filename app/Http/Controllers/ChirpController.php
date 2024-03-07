@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Chirp;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,6 +16,10 @@ class ChirpController extends Controller
      */
     public function index(): Response
     {
+        // $user = Auth::user();
+
+        // dd($user);
+
         return Inertia::render("Chirps/Index", [
             // chirps variable will inject to vue template
             'chirps' => Chirp::with(['user:id,name', 'chirplikes.user:id,name'])->latest()->get(),
