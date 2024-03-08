@@ -30,26 +30,27 @@ class ChirpLikeController extends Controller
      */
     public function store(Request $request): Response
     {
-        //
-        // $validated = $request->validate([
-        //     "chirp_id" => "required",
-        //     "user_id" => "required",
-        // ]);
+        // Seems validate will return response when invalid
+        $validated = $request->validate([
+            "chirp_id" => "required",
+            "user_id" => "required",
+        ]);
 
-        // $data = {
-        //     "chirp_id" => "required",
-        //     "user_id" => "required",
-        // }
-        $data = [
-            "chirp_id" => $request->post('chirp_id'),
-            "user_id" => $request->post('user_id'),
+        // $data = [
+        //     "chirp_id" => $request->post('chirp_id'),
+        //     "user_id" => $request->post('user_id'),
+        //     "like" => true,
+        // ];
+
+        $like = ChirpLike::create([
+            ...$validated,
             "like" => true,
-        ];
-
-        ChirpLike::create($data);
+        ]);
         
         // dd($validated);
-        return response("Inserted!", 200);
+        
+
+        return response(json_encode($like), 200);
     }
 
     /**
@@ -79,8 +80,11 @@ class ChirpLikeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ChirpLike $chirpLike)
+    public function destroy(ChirpLike $chirplike): Response
     {
         //
+        $result = $chirplike->delete();
+
+        return response(json_encode(['result' => $result]), 200);
     }
 }

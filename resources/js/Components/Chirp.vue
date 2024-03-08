@@ -2,11 +2,12 @@
 import { useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
+import axios from "axios";
 
 dayjs.extend(relativeTime);
 
@@ -23,56 +24,70 @@ const form = useForm({
 
 const editing = ref(false);
 const liked = ref(false);
+const likedObject = ref(null);
 const likedFound = props.chirp.chirplikes.find((u) => {
   return u.user_id === props.user.id;
 });
 if (likedFound) {
   console.log(likedFound);
+  likedObject.value = likedFound;
   liked.value = true;
 }
 const liking = ref(false);
+
+const createLike = async () => {
+  try {
+    const response = await axios.post(route("chirplikes.store"), {
+      user_id: props.user.id,
+      chirp_id: props.chirp.id,
+    });
+
+    likedObject.value = response.data;
+    liked.value = true;
+  } catch {
+  } finally {
+    liking.value = false;
+  }
+};
+
+const deleteLike = async () => {
+  try {
+    console.log(route("chirplikes.destroy", likedObject.value.id));
+    const response = await axios.delete(route("chirplikes.destroy", likedObject.value.id));
+
+    if (response.data.result == true) {
+      likedObject.value = null;
+      liked.value = false;
+    }
+  } catch {}
+};
 
 const handleLike = async (e) => {
   // remember to use .value in script
   liking.value = true;
 
-  console.log(props.chirp.chirplikes);
+  // console.log(props.chirp.chirplikes);
 
-  setTimeout(() => {
-    liked.value = !liked.value;
-    liking.value = false;
-  }, 500);
-  // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+  // console.log(route("chirplikes.store"));
+  // console.log(route("chirplikes.destroy"));
 
-  // try {
-  //   const response = await axios.post(
-  //     route("chirplikes.store"),
-  //     {
-  //       user_id: props.chirp.user_id,
-  //       chirp_id: props.chirp.id,
-  //     },
-  //     {
-  //       headers: {
-  //         "X-CSRF-TOKEN": csrfToken,
-  //       },
-  //     }
-  //   );
-  // } catch {}
+  // setTimeout(() => {
+  //   liked.value = !liked.value;
+  //   liking.value = false;
+  // }, 500);
 
+  // const token = await getToken();
+
+  if (likedObject.value == null) {
+    console.log(null);
+    await createLike();
+  } else {
+    await deleteLike();
+  }
+
+  liking.value = false;
   // likeForm.post(route("chirplikes.index"));
 };
-
-// function handleClick() {
-//   console.log("Liked!");
-//   console.log(`${props.chirp.id}`);
-//   console.log(`${props.chirp.user_id}`);
-
-//   likeForm.post();
-
-//   // router.post(route("chirplikes.index"), {});
-
-//   // fetch(route("chirplikes."));
-// }
 </script>
 
 <template>
