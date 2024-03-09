@@ -16,7 +16,7 @@ dayjs.extend(relativeTime);
 // !Not the chirps from the controller
 const props = defineProps(["chirp", "user"]);
 
-console.log(props.chirp);
+// console.log(props.chirp);
 
 const form = useForm({
   message: props.chirp.message,
@@ -24,16 +24,21 @@ const form = useForm({
 
 const editing = ref(false);
 const liked = ref(false);
-const likedObject = ref(null);
-const likedFound = props.chirp.chirplikes.find((u) => {
-  return u.user_id === props.user.id;
-});
-if (likedFound) {
-  console.log(likedFound);
-  likedObject.value = likedFound;
-  liked.value = true;
-}
-const liking = ref(false);
+const likedUserList = ref(props.chirp.chirplikes);
+const findUserLike = () => {
+  // Move user's like to the first item if found
+  const likedIndex = likedUserList.value.findIndex((like) => like.user_id === props.user.id);
+  if (likedIndex !== -1) {
+    // Move user like to the first element
+    [likedUserList.value[likedIndex], likedUserList.value[0]] = [likedUserList.value[0], likedUserList.value[likedIndex]];
+    console.log(likedUserList.value);
+    liked.value = true;
+    return likedUserList.value[0];
+  }
+  return null;
+};
+const likedObject = ref(findUserLike());
+const updatingLike = ref(false);
 
 const createLike = async () => {
   try {
@@ -42,11 +47,12 @@ const createLike = async () => {
       chirp_id: props.chirp.id,
     });
 
+    likedUserList.value.unshift(response.data);
     likedObject.value = response.data;
     liked.value = true;
   } catch {
   } finally {
-    liking.value = false;
+    updatingLike.value = false;
   }
 };
 
@@ -56,6 +62,7 @@ const deleteLike = async () => {
     const response = await axios.delete(route("chirplikes.destroy", likedObject.value.id));
 
     if (response.data.result == true) {
+      likedUserList.value = likedUserList.value.filter((like) => like.user_id !== props.user.id);
       likedObject.value = null;
       liked.value = false;
     }
@@ -64,19 +71,7 @@ const deleteLike = async () => {
 
 const handleLike = async (e) => {
   // remember to use .value in script
-  liking.value = true;
-
-  // console.log(props.chirp.chirplikes);
-
-  // console.log(route("chirplikes.store"));
-  // console.log(route("chirplikes.destroy"));
-
-  // setTimeout(() => {
-  //   liked.value = !liked.value;
-  //   liking.value = false;
-  // }, 500);
-
-  // const token = await getToken();
+  updatingLike.value = true;
 
   if (likedObject.value == null) {
     console.log(null);
@@ -85,8 +80,7 @@ const handleLike = async (e) => {
     await deleteLike();
   }
 
-  liking.value = false;
-  // likeForm.post(route("chirplikes.index"));
+  updatingLike.value = false;
 };
 </script>
 
@@ -184,64 +178,80 @@ const handleLike = async (e) => {
       </div>
     </div>
     <!-- utils -->
-
-    <div>
+    <div class="utils border-t py-2">
       <div
-        v-if="liking"
-        class="w-12 h-12 flex justify-center items-center"
+        class="px-6 flex gap-2 items-center"
+        v-if="likedUserList.length > 0"
       >
-        <svg
-          class="animate-spin h- w-5 text-black"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          ></circle>
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
-        </svg>
+        <span>Liked by:</span>
+        <ul class="flex">
+          <li v-for="(like, index) in likedUserList.slice(0, 3)">
+            <span v-if="like.user_id == props.user.id">Me</span>
+            <span v-else>
+              {{ index == 0 ? `${like.user.name}` : `, ${like.user.name}` }}
+            </span>
+            <span v-if="index == 2 && likedUserList.length > 3">{{ `, and other ${likedUserList.length - 3} people...` }}</span>
+          </li>
+        </ul>
       </div>
-      <button
-        v-else
-        @click="handleLike"
-      >
-        <div class="w-12 h-12 flex justify-center items-center">
+      <div class="px-3">
+        <div
+          v-if="updatingLike"
+          class="w-12 h-12 flex justify-center items-center"
+        >
           <svg
-            v-if="liked"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="#f87171"
-            class="w-6 h-6"
-          >
-            <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-          </svg>
-          <svg
-            v-else
+            class="animate-spin h- w-5 text-black"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
           >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-            />
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
           </svg>
         </div>
-      </button>
+        <button
+          v-else
+          @click="handleLike"
+        >
+          <div class="w-12 h-12 flex justify-center items-center">
+            <svg
+              v-if="liked"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="#f87171"
+              class="w-6 h-6"
+            >
+              <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+            </svg>
+            <svg
+              v-else
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+              />
+            </svg>
+          </div>
+        </button>
+      </div>
     </div>
   </div>
 </template>
