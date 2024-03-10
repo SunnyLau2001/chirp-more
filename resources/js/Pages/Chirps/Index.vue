@@ -22,6 +22,7 @@ const user = computed(() => {
     name: page.props.auth.user.name,
   };
 });
+console.log(page.props.chirps);
 </script>
 
 <template>

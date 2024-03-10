@@ -39,6 +39,12 @@ const showingNavigationDropdown = ref(false);
                 >
                   Chirps
                 </NavLink>
+                <NavLink
+                  :href="route('mychirps')"
+                  :active="route().current('mychirps')"
+                >
+                  MyChirps
+                </NavLink>
               </div>
             </div>
 

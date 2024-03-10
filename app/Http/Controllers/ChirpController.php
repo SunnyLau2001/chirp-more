@@ -16,10 +16,6 @@ class ChirpController extends Controller
      */
     public function index(): Response
     {
-        // $user = Auth::user();
-
-        // dd($user);
-
         return Inertia::render("Chirps/Index", [
             // chirps variable will inject to vue template
             'chirps' => Chirp::with(['user:id,name', 'chirplikes.user:id,name'])->latest()->get(),
@@ -85,7 +81,6 @@ class ChirpController extends Controller
      */
     public function destroy(Chirp $chirp): RedirectResponse
     {
-        dd($chirp);
         $this->authorize('delete', $chirp);
  
         $chirp->delete();

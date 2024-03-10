@@ -82,7 +82,8 @@ class ChirpLikeController extends Controller
      */
     public function destroy(ChirpLike $chirplike): Response
     {
-        //
+        $this->authorize('delete', $chirplike);
+        
         $result = $chirplike->delete();
 
         return response(json_encode(['result' => $result]), 200);

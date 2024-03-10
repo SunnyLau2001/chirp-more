@@ -51,6 +51,6 @@ class User extends Authenticatable
 
     public function chirplikes(): HasMany
     {
-        return $this->hasMany(Chirp::class);
+        return $this->hasMany(ChirpLike::class);
     }
 }

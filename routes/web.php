@@ -3,8 +3,9 @@
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\ChirpLikeController;
 use App\Http\Controllers\ProfileController;
-use App\Models\ChirpLike;
+use App\Models\User;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -35,6 +36,15 @@ Route::get('/dashboard', function () {
 Route::resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
+
+Route::get('/mychirps', function (Request $request) {
+    $result = User::with('chirps.user', 'chirps.chirplikes.user:id,name', 'chirplikes.chirp.chirplikes.user:id,name')->find($request->user()->id, ['id']);
+
+    return Inertia::render("MyChirps/Index", [
+        'chirps' => $result->chirps,
+        'chirplikes' => $result->chirplikes,
+    ]);
+})->middleware(['auth', 'verified'])->name('mychirps');
 
 Route::resource('chirplikes', ChirpLikeController::class)
     ->only(['index', 'store', 'destroy'])
