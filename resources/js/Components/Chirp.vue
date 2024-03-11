@@ -1,8 +1,8 @@
 <script setup>
-import { useForm } from "@inertiajs/vue3";
+import { useForm, usePage } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
@@ -14,7 +14,7 @@ dayjs.extend(relativeTime);
 // Display a single chirp with a chirp data
 // Injected chirp from the page calling this component
 // !Not the chirps from the controller
-const props = defineProps(["chirp", "user"]);
+const props = defineProps(["chirp", "user", "showUtil"]);
 
 // console.log(props.chirp);
 
@@ -177,23 +177,27 @@ const handleLike = async (e) => {
         </p>
       </div>
     </div>
+    <!-- stats -->
+    <div
+      class="px-6 flex gap-2 items-center"
+      v-if="likedUserList.length > 0"
+    >
+      <span>Liked by:</span>
+      <ul class="flex">
+        <li v-for="(like, index) in likedUserList.slice(0, 3)">
+          <span v-if="like.user_id == props.user.id">Me</span>
+          <span v-else>
+            {{ index == 0 ? `${like.user.name}` : `, ${like.user.name}` }}
+          </span>
+          <span v-if="index == 2 && likedUserList.length > 3">{{ `, and other ${likedUserList.length - 3} people...` }}</span>
+        </li>
+      </ul>
+    </div>
     <!-- utils -->
-    <div class="utils border-t py-2">
-      <div
-        class="px-6 flex gap-2 items-center"
-        v-if="likedUserList.length > 0"
-      >
-        <span>Liked by:</span>
-        <ul class="flex">
-          <li v-for="(like, index) in likedUserList.slice(0, 3)">
-            <span v-if="like.user_id == props.user.id">Me</span>
-            <span v-else>
-              {{ index == 0 ? `${like.user.name}` : `, ${like.user.name}` }}
-            </span>
-            <span v-if="index == 2 && likedUserList.length > 3">{{ `, and other ${likedUserList.length - 3} people...` }}</span>
-          </li>
-        </ul>
-      </div>
+    <div
+      v-if="showUtil"
+      class="utils py-2"
+    >
       <div class="px-3">
         <div
           v-if="updatingLike"

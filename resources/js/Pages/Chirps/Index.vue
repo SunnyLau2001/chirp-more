@@ -48,6 +48,7 @@ console.log(page.props.chirps);
           :key="chirp.id"
           :chirp="chirp"
           :user="user"
+          :showUtil="true"
         />
       </div>
     </div>

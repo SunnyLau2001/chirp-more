@@ -19,7 +19,7 @@ const userChirps = computed(() => {
   return page.props.chirps;
 });
 
-console.log(userChirps.value);
+console.log(page.props.chirplikes);
 </script>
 
 <template>
@@ -33,6 +33,7 @@ console.log(userChirps.value);
           :key="chirp.id"
           :chirp="chirp"
           :user="user"
+          :showUtil="false"
         />
       </div>
     </div>
