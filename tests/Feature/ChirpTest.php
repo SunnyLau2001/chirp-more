@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class ChirpTest extends TestCase
@@ -34,7 +35,7 @@ class ChirpTest extends TestCase
             }
         }
         
-        
+        // Duplicate like for a chirp from the same user may occur
         $chirp_likes = ChirpLike::factory()->count(3)->create();
         echo "{$chirp_likes} \n";
 
@@ -43,5 +44,33 @@ class ChirpTest extends TestCase
 
         // $response = $this->get('/chirps');
         // $response->assertOk();
+    }
+
+    public function test_show_chirps(): void
+    {
+        $users = User::factory()->has(Chirp::factory()->count(3))->count(3)->create();
+
+        // Disable if not running the vite dev server, otherwise error occur
+        $this->withoutVite();
+
+        foreach ($users as $user)
+        {
+            $response = $this->actingAs($user)->get(route('chirps.index'));
+
+            $response->assertInertia(fn (AssertableInertia $page) => $page
+                // check chirps property exist
+                ->has('chirps', 9, fn (AssertableInertia $page) => $page
+                    ->has('id')
+                    ->has('user_id')
+                    ->has('user')
+                    ->has('message')
+                    ->has('chirplikes')
+                    ->etc()
+                )
+            );
+
+            // Check for user's chirps are shown
+            $response->assertSee($user->name);
+        }
     }
 }
