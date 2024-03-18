@@ -14,7 +14,7 @@ class ChirpLikeController extends Controller
     public function index(): Response
     {
         //
-        return response("Hit api!", 200);
+        return response(200);
     }
 
     /**

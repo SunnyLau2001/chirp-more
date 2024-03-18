@@ -28,7 +28,6 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
-        // data pass to $this, so you can access in the authenticate
         return [
             'login' => ['required', 'string'],
             'password' => ['required', 'string'],
@@ -88,6 +87,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->input('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
 }

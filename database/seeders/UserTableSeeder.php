@@ -16,7 +16,7 @@ class UserTableSeeder extends Seeder
     {
         // Create admin account
         User::factory()->create([
-            'name' => 'Admin',
+            'name' => 'admin',
             'email' => 'admin@test.com',
             'password' => 'pw12345678',
             'role' => 'admin',
