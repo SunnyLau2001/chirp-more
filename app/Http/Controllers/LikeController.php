@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ChirpLike;
+use App\Models\Like;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class ChirpLikeController extends Controller
+class LikeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -42,7 +42,7 @@ class ChirpLikeController extends Controller
         //     "like" => true,
         // ];
 
-        $like = ChirpLike::create([
+        $like = Like::create([
             ...$validated,
             "like" => true,
         ]);
@@ -56,7 +56,7 @@ class ChirpLikeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ChirpLike $chirpLike)
+    public function show(Like $like)
     {
         //
     }
@@ -64,7 +64,7 @@ class ChirpLikeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ChirpLike $chirpLike)
+    public function edit(Like $like)
     {
         //
     }
@@ -72,7 +72,7 @@ class ChirpLikeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ChirpLike $chirpLike)
+    public function update(Request $request, Like $like)
     {
         //
     }
@@ -80,11 +80,11 @@ class ChirpLikeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ChirpLike $chirplike): Response
+    public function destroy(Like $like): Response
     {
-        $this->authorize('delete', $chirplike);
+       $this->authorize('delete', $like);
         
-        $result = $chirplike->delete();
+        $result = $like->delete();
 
         return response(json_encode(['result' => $result]), 200);
     }

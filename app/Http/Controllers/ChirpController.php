@@ -19,7 +19,7 @@ class ChirpController extends Controller
     {
         return Inertia::render("Chirps/Index", [
             // chirps variable will inject to vue template
-            'chirps' => Chirp::with(['user:id,name', 'chirplikes.user:id,name'])->latest()->get(),
+            'chirps' => Chirp::with(['user:id,name', 'likes.user:id,name'])->latest()->get(),
         ]); 
     }
 

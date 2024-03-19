@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChirpController;
-use App\Http\Controllers\ChirpLikeController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserChirpController;
 use Illuminate\Foundation\Application;
@@ -35,12 +35,12 @@ Route::get('/dashboard', function () {
 Route::Resource('chirps', ChirpController::class)
     ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
-
-Route::get('/mychirps', [UserChirpController::class, 'user_chirps'])->middleware(['auth', 'verified'])->name('mychirps');
-
-Route::resource('chirplikes', ChirpLikeController::class)
+    
+Route::resource('likes', LikeController::class)
     ->only(['index', 'store', 'destroy'])
     ->middleware(['auth', 'verified']);
+
+Route::get('/mychirps', [UserChirpController::class, 'user_chirps'])->middleware(['auth', 'verified'])->name('mychirps');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

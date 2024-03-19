@@ -18,7 +18,7 @@ class ChirpTableSeeder extends Seeder
         $users = User::all();
 
         foreach ($users as $user) {
-            Chirp::factory()->count(3)->create([
+            Chirp::factory()->count(4)->create([
                 'user_id' => $user->id,
             ]);
         }

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
@@ -7,50 +7,39 @@ import Chirp from "@/Components/Chirp.vue";
 import { computed } from "vue";
 
 // Injected from the ChirpController when hitting the index route.
-defineProps(["chirps"]);
+const props = defineProps<{
+	chirps: any;
+}>();
 
 const form = useForm({
-  message: "",
+	message: "",
 });
 
 // Testing for access user data through inertiajs
 // You can access user data from here, or pass during accessing the controller
 const page = usePage();
 const user = computed(() => {
-  return {
-    id: page.props.auth.user.id,
-    name: page.props.auth.user.name,
-  };
+	return {
+		id: page.props.auth.user.id,
+		name: page.props.auth.user.name,
+	};
 });
-console.log(page.props.chirps);
+console.log(props.chirps);
 </script>
 
 <template>
-  <Head title="Chirps" />
+	<Head title="Chirps" />
 
-  <AuthenticatedLayout>
-    <div class="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
-      <form @submit.prevent="form.post(route('chirps.store'), { onSuccess: () => form.reset() })">
-        <textarea
-          v-model="form.message"
-          placeholder="What's on your mind?"
-          class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
-        ></textarea>
-        <InputError
-          :message="form.errors.message"
-          class="mt-2"
-        />
-        <PrimaryButton class="mt-4">Chirp</PrimaryButton>
-      </form>
-      <div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
-        <Chirp
-          v-for="chirp in chirps"
-          :key="chirp.id"
-          :chirp="chirp"
-          :user="user"
-          :showUtil="true"
-        />
-      </div>
-    </div>
-  </AuthenticatedLayout>
+	<AuthenticatedLayout>
+		<div class="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
+			<form @submit.prevent="form.post(route('chirps.store'), { onSuccess: () => form.reset() })">
+				<textarea v-model="form.message" placeholder="What's on your mind?" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
+				<InputError :message="form.errors.message" class="mt-2" />
+				<PrimaryButton class="mt-4">Chirp</PrimaryButton>
+			</form>
+			<div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
+				<Chirp v-for="chirp in props.chirps" :key="chirp.id" :chirp="chirp" :user="user" :showUtil="true" />
+			</div>
+		</div>
+	</AuthenticatedLayout>
 </template>

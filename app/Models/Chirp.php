@@ -25,8 +25,8 @@ class Chirp extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function chirplikes(): HasMany
+    public function likes(): HasMany
     {
-        return $this->hasMany(ChirpLike::class);
+        return $this->hasMany(Like::class);
     }
 }

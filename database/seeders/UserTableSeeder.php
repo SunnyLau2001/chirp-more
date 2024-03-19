@@ -29,5 +29,8 @@ class UserTableSeeder extends Seeder
             'password' => 'pw12345678',
             'role' => 'user',
         ]);
+
+        // Create dummy account
+        User::factory()->count(3)->create();
     }
 }
