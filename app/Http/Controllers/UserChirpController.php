@@ -10,11 +10,11 @@ use Inertia\Response;
 class UserChirpController extends Controller{
   public function user_chirps(Request $request): Response
   {
-    $result = User::with('chirps.user', 'chirps.chirplikes.user:id,name', 'chirplikes.chirp.user', 'chirplikes.chirp.chirplikes.user:id,name')->find($request->user()->id, ['id']);
+    $result = User::with('chirps.user', 'chirps.likes.user:id,name', 'likes.chirp.user', 'likes.chirp.likes.user:id,name')->find($request->user()->id, ['id']);
 
     return Inertia::render("MyChirps/Index", [
         'chirps' => $result->chirps,
-        'chirplikes' => $result->chirplikes,
+        'likes' => $result->likes,
     ]);
   }
 

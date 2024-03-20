@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Chirp;
-use App\Models\ChirpLike;
+use App\Models\Like;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -36,7 +36,7 @@ class ChirpTest extends TestCase
         }
         
         // Duplicate like for a chirp from the same user may occur
-        $chirp_likes = ChirpLike::factory()->count(3)->create();
+        $chirp_likes = Like::factory()->count(3)->create();
         echo "{$chirp_likes} \n";
 
         // $id = Chirp::inRandomOrder()->first()->id;

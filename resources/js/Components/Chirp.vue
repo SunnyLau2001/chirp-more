@@ -8,41 +8,22 @@ import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import axios from "axios";
+import type { ChirpProps, LikeProps } from "@/types/chirp";
 
 dayjs.extend(relativeTime);
-
-interface User {
-	id: number;
-	name: string;
-}
-
-interface Like {
-	id: number;
-	chirp_id: number;
-	user_id: number;
-	user: User;
-}
-
-interface Chirp {
-	id: number;
-	user: User;
-	user_id: number;
-	message: string;
-	likes: Like[];
-	created_at?: any;
-	updated_at?: any;
-}
 
 // Display a single chirp with a chirp data
 // Injected chirp from the page calling this component
 // !Not the chirps from the controller
 const props = defineProps<{
-	chirp: Chirp;
-	user: {
+	chirp: ChirpProps;
+	currentUser: {
 		id: number;
 		name: string;
-	};
+	} | null;
 }>();
+
+console.log(props.chirp);
 
 const form = useForm({
 	message: props.chirp.message,
@@ -52,8 +33,10 @@ const editing = ref(false);
 
 const liked = ref(false);
 const sortLikeList = () => {
+	if (!props.chirp.likes) return [];
+
 	// Move user's like to the first item if found
-	const likedIndex = props.chirp.likes.findIndex((like: any) => like.user_id === props.user.id);
+	const likedIndex = props.chirp.likes.findIndex((like: LikeProps) => like.user_id === props.currentUser?.id);
 	if (likedIndex !== -1) {
 		// Move user like to the first element
 		[props.chirp.likes[likedIndex], props.chirp.likes[0]] = [props.chirp.likes[0], props.chirp.likes[likedIndex]];
@@ -64,10 +47,11 @@ const sortLikeList = () => {
 	return props.chirp.likes;
 };
 const likeList = ref(sortLikeList());
-const getMyLike = (likes: Like[]) => {
+const getMyLike = (likes: LikeProps[]) => {
+	// exit if likeList no element
 	if (likeList.value.length === 0) return null;
 
-	if (likeList.value[0].user_id === props.user.id) return likeList.value[0];
+	if (likeList.value[0].user_id === props.currentUser?.id) return likeList.value[0];
 
 	return null;
 };
@@ -77,7 +61,7 @@ const updatingLike = ref(false);
 const createLike = async () => {
 	try {
 		const response = await axios.post(route("likes.store"), {
-			user_id: props.user.id,
+			user_id: props.currentUser?.id,
 			chirp_id: props.chirp.id,
 		});
 
@@ -97,7 +81,7 @@ const deleteLike = async () => {
 		const response = await axios.delete(route("likes.destroy", myLike.value?.id));
 
 		if (response.data.result == true) {
-			likeList.value = likeList.value.filter((like: any) => like.user_id !== props.user.id);
+			likeList.value = likeList.value.filter((like: any) => like.user_id !== props.currentUser?.id);
 			myLike.value = null;
 			liked.value = false;
 		}
@@ -132,7 +116,7 @@ const handleLike = async (e: MouseEvent) => {
 						<small class="ml-2 text-sm text-gray-600">{{ dayjs(chirp.created_at).fromNow() }}</small>
 						<small v-if="chirp.created_at !== chirp.updated_at" class="text-sm text-gray-600"> &middot; edited</small>
 					</div>
-					<Dropdown v-if="chirp.user.id === $page.props.auth.user.id">
+					<Dropdown v-if="chirp.user.id === $page.props.auth.user?.id">
 						<template #trigger>
 							<button>
 								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
@@ -169,11 +153,11 @@ const handleLike = async (e: MouseEvent) => {
 			</div>
 		</div>
 		<!-- stats -->
-		<div class="px-6 flex gap-2 items-center" v-if="likeList.length > 0">
+		<div class="px-6 flex gap-2 items-center pb-5" v-if="likeList.length > 0">
 			<span>Liked by:</span>
 			<ul class="flex">
 				<li v-for="(like, index) in likeList.slice(0, 3)">
-					<span v-if="like.user_id == props.user.id">Me</span>
+					<span v-if="like.user_id == props.currentUser?.id">Me</span>
 					<span v-else>
 						{{ index == 0 ? `${like.user.name}` : `, ${like.user.name}` }}
 					</span>
@@ -182,7 +166,7 @@ const handleLike = async (e: MouseEvent) => {
 			</ul>
 		</div>
 		<!-- utils -->
-		<div class="utils py-2">
+		<div class="utils hidden">
 			<div class="px-3">
 				<div v-if="updatingLike" class="w-12 h-12 flex justify-center items-center">
 					<svg class="animate-spin h- w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
