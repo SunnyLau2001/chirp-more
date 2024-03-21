@@ -23,8 +23,6 @@ const props = defineProps<{
 	} | null;
 }>();
 
-console.log(props.chirp);
-
 const form = useForm({
 	message: props.chirp.message,
 });
@@ -166,7 +164,7 @@ const handleLike = async (e: MouseEvent) => {
 			</ul>
 		</div>
 		<!-- utils -->
-		<div class="utils hidden">
+		<div v-if="currentUser !== null" class="utils">
 			<div class="px-3">
 				<div v-if="updatingLike" class="w-12 h-12 flex justify-center items-center">
 					<svg class="animate-spin h- w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

@@ -3,13 +3,14 @@
 namespace App\Events;
 
 use App\Models\Chirp;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ChirpCreated implements ShouldBroadcast
+class EmitChirpPreview implements ShouldBroadcast, ShouldDispatchAfterCommit
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -29,16 +30,16 @@ class ChirpCreated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('chirp-preview'),
+            new Channel('emit-chirp'),
         ];
     }
 
     public function broadcastWith(): array
     {
-        $chirp_with_relation = Chirp::with(['user:id,name', 'likes.user:id,name'])->find($this->chirp->id, ['id']);
+
 
         return [
-            'chirp' => $chirp_with_relation
+            'chirp' => $this->chirp
         ];
     }
 }

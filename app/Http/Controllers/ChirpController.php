@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\EmitChirpPreview;
 use App\Models\Chirp;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -40,8 +39,11 @@ class ChirpController extends Controller
             'message' => 'required|string|max:255',
         ]);
         
-        $request->user()->chirps()->create($validated);
+        // Return eager loaded instance after create
+        $chirp = $request->user()->chirps()->create($validated)->load('user:id,name', 'likes.user:id,name');
  
+        EmitChirpPreview::dispatch($chirp);
+
         return redirect(route('chirps.index'));
     }
 

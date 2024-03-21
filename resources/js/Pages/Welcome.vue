@@ -2,6 +2,8 @@
 import Chirp from "@/Components/Chirp.vue";
 import type { ChirpProps } from "@/types/chirp";
 import { Head, Link, usePage } from "@inertiajs/vue3";
+import axios from "axios";
+import { ref } from "vue";
 import { computed } from "vue";
 
 interface Props {
@@ -11,6 +13,8 @@ interface Props {
 	phpVersion: string;
 	chirps: ChirpProps[];
 	message?: string;
+	userCounts?: number;
+	chirpCounts?: number;
 }
 
 // defineProps<{
@@ -21,11 +25,20 @@ interface Props {
 // }>();
 const props = withDefaults(defineProps<Props>(), {
 	message: "Hello",
+	userCounts: 0,
+	chirpCounts: 0,
 });
 
 const page = usePage();
 const user = computed(() => {
 	return page.props.auth.user;
+});
+
+const chirps = ref(props.chirps);
+const chirpCounts = ref(props.chirpCounts);
+
+window.Echo.channel(`emit-chirp`).listen("EmitChirpPreview", (e: any) => {
+	console.log(e);
 });
 </script>
 
@@ -47,9 +60,24 @@ const user = computed(() => {
 			<div class="py-8">
 				<h1 class="text-center text-4xl">Join The <span class="">Chirp</span>!</h1>
 			</div>
-			<div class="demo-box h-[50dvh] overflow-y-scroll border rounded-lg overflow-clip">
-				<div class="bg-white shadow-sm rounded-lg divide-y">
-					<Chirp v-for="chirp in props.chirps" :key="chirp.id" :chirp="chirp" :currentUser="user" />
+			<div class="stat flex gap-2">
+				<div class="w-1/2 border rounded-lg px-5 py-3" aria-label="chirp counts">
+					<p class="text-gray-400">Chirps</p>
+					<p class="text-2xl">{{ chirpCounts }}</p>
+				</div>
+				<div class="w-1/2 border rounded-lg px-5 py-3" aria-label="user counts">
+					<p class="text-gray-400">Users</p>
+					<p class="text-2xl">{{ props.userCounts }}</p>
+				</div>
+			</div>
+			<div class="border rounded-lg overflow-clip mt-4">
+				<div class="px-5 py-3 border-b text-gray-400">
+					<p>Explore the timeline</p>
+				</div>
+				<div class="demo-box h-[50dvh] overflow-y-scroll overflow-clip">
+					<div class="bg-white shadow-sm rounded-lg divide-y">
+						<Chirp v-for="chirp in chirps" :key="chirp.id" :chirp="chirp" :currentUser="user" />
+					</div>
 				</div>
 			</div>
 		</div>
