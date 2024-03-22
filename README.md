@@ -21,3 +21,7 @@ Seeding default data to the `User` and `Chirp` table.
 ## Testing
 
 Create a `ChirpTest` for testing the creating of chirps for users.
+
+## Broadcasting
+
+Create event for broadcasting the new chirp created to online user.
