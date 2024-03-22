@@ -36,10 +36,10 @@ class EmitChirpPreview implements ShouldBroadcast, ShouldDispatchAfterCommit
 
     public function broadcastWith(): array
     {
-
+        $loadedChirp = $this->chirp->load('user:id,name', 'likes.user:id,name');
 
         return [
-            'chirp' => $this->chirp
+            'chirp' => $loadedChirp
         ];
     }
 }

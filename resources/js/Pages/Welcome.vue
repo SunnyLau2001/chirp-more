@@ -38,7 +38,8 @@ const chirps = ref(props.chirps);
 const chirpCounts = ref(props.chirpCounts);
 
 window.Echo.channel(`emit-chirp`).listen("EmitChirpPreview", (e: any) => {
-	console.log(e);
+	const newChirp: ChirpProps = e.chirp || null;
+	if (newChirp) chirps.value.unshift(newChirp);
 });
 </script>
 
@@ -47,7 +48,7 @@ window.Echo.channel(`emit-chirp`).listen("EmitChirpPreview", (e: any) => {
 
 	<div class="relative flex justify-center items-center min-h-screen selection:bg-red-500 selection:text-white">
 		<div v-if="props.canLogin" class="fixed top-0 right-0 p-6 text-end">
-			<Link v-if="user" :href="route('dashboard')" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</Link>
+			<Link v-if="user" :href="route('chirps.index')" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Chirps</Link>
 
 			<template v-else>
 				<Link :href="route('login')" class="focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</Link>

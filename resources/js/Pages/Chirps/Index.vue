@@ -5,10 +5,13 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { useForm, Head, usePage } from "@inertiajs/vue3";
 import Chirp from "@/Components/Chirp.vue";
 import { computed } from "vue";
+import { ChirpProps } from "@/types/chirp";
+import { ref } from "vue";
+import Echo from "laravel-echo";
 
 // Injected from the ChirpController when hitting the index route.
 const props = defineProps<{
-	chirps: any;
+	chirps: ChirpProps[];
 }>();
 
 const form = useForm({
@@ -24,7 +27,13 @@ const user = computed(() => {
 		name: page.props.auth.user.name,
 	};
 });
-console.log(props.chirps);
+
+const chirps = ref(props.chirps);
+
+window.Echo.channel(`emit-chirp`).listen("EmitChirpPreview", (e: any) => {
+	const newChirp: ChirpProps = e.chirp || null;
+	if (newChirp) chirps.value.unshift(newChirp);
+});
 </script>
 
 <template>
@@ -37,8 +46,8 @@ console.log(props.chirps);
 				<InputError :message="form.errors.message" class="mt-2" />
 				<PrimaryButton class="mt-4">Chirp</PrimaryButton>
 			</form>
-			<div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
-				<Chirp v-for="chirp in props.chirps" :key="chirp.id" :chirp="chirp" :user="user" :showUtil="true" />
+			<div class="mt-6 bg-white shadow-sm border border-gray-100 rounded-lg divide-y">
+				<Chirp v-for="chirp in chirps" :key="chirp.id" :chirp="chirp" :currentUser="user" />
 			</div>
 		</div>
 	</AuthenticatedLayout>

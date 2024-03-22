@@ -43,6 +43,7 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
+        // Custom checking for login credential (include email and name)
         $user = User::where('email', $this->login)
             ->orWhere('name', $this->login)
             ->first();

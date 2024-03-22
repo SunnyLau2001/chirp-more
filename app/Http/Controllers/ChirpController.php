@@ -40,7 +40,7 @@ class ChirpController extends Controller
         ]);
         
         // Return eager loaded instance after create
-        $chirp = $request->user()->chirps()->create($validated)->load('user:id,name', 'likes.user:id,name');
+        $chirp = $request->user()->chirps()->create($validated);
  
         EmitChirpPreview::dispatch($chirp);
 
