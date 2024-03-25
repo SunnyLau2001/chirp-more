@@ -60,10 +60,15 @@ const submit = () => {
 			</div>
 
 			<div class="flex items-center justify-end mt-4">
-				<Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"> Forgot your password? </Link>
+				<Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"> Forgot your password? </Link>
 
 				<PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"> Log in </PrimaryButton>
 			</div>
 		</form>
+
+		<div class="mt-4">
+			<p class="text-center text-sm mb-4">Or Login With</p>
+			<Link :href="route('auth.redirect', 'github')" class="block py-3 w-full text-center text-white rounded-md bg-teal-700 hover:bg-teal-600 active:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition ease-in-out duration-150">Github</Link>
+		</div>
 	</GuestLayout>
 </template>

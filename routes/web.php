@@ -25,7 +25,7 @@ use Laravel\Socialite\Facades\Socialite;
 */
 
 // Social login credential login
-Route::get('/auth/redirect/{driver}', [SocialLoginController::class, 'redirect']);
+Route::get('/auth/redirect/{driver}', [SocialLoginController::class, 'redirect'])->name('auth.redirect');
  
 Route::get('/auth/callback/github', function () {
     $user = Socialite::driver('github')->user();
