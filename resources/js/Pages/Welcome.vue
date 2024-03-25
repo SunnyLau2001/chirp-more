@@ -37,7 +37,7 @@ const user = computed(() => {
 const chirps = ref(props.chirps);
 const chirpCounts = ref(props.chirpCounts);
 
-window.Echo.channel(`emit-chirp`).listen("EmitChirpPreview", (e: any) => {
+window.Echo.channel(`emit-chirp`).listen("ChirpCreated", (e: any) => {
 	const newChirp: ChirpProps = e.chirp || null;
 	if (newChirp) chirps.value.unshift(newChirp);
 });

@@ -3,8 +3,8 @@
 namespace App\Events;
 
 use App\Models\Chirp;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -29,16 +29,17 @@ class ChirpCreated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('chirp-preview'),
+            new Channel('emit-chirp'),
         ];
     }
 
     public function broadcastWith(): array
     {
-        $chirp_with_relation = Chirp::with(['user:id,name', 'likes.user:id,name'])->find($this->chirp->id, ['id']);
+        // Loading the relation after created
+        $loadedChirp = $this->chirp->load('user:id,name', 'likes.user:id,name');
 
         return [
-            'chirp' => $chirp_with_relation
+            'chirp' => $loadedChirp
         ];
     }
 }

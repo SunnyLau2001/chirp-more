@@ -14,6 +14,9 @@ class ChirpTableSeeder extends Seeder
      */
     public function run(): void
     {
+        // Used to disable the broadcasting event passed.
+        Chirp::unsetEventDispatcher();
+
         //
         $users = User::all();
 

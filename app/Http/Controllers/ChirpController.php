@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\EmitChirpPreview;
+// use App\Events\EmitChirpPreview;
 use App\Models\Chirp;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,8 +42,6 @@ class ChirpController extends Controller
         // Return eager loaded instance after create
         $chirp = $request->user()->chirps()->create($validated);
  
-        EmitChirpPreview::dispatch($chirp);
-
         return redirect(route('chirps.index'));
     }
 
