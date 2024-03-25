@@ -4,12 +4,14 @@ use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PreviewController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\UserChirpController;
 use App\Models\Chirp;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +23,17 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Social login credential login
+Route::get('/auth/redirect/{driver}', [SocialLoginController::class, 'redirect']);
+ 
+Route::get('/auth/callback/github', function () {
+    $user = Socialite::driver('github')->user();
+    
+    dd($user);
+    // $user->token
+});
+
 
 Route::get('/', [PreviewController::class, 'welcome']);
 
