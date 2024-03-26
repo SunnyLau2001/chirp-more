@@ -25,3 +25,7 @@ Create a `ChirpTest` for testing the creating of chirps for users.
 ## Broadcasting
 
 Create event for broadcasting the new chirp created to online user.
+
+## Socialite (Social Login/ OAuth Login)
+
+Adding Github login option.
