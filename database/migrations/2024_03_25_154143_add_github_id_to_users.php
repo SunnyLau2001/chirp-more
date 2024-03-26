@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->string('github')->nullable()->comment('Users\' github id');
+            $table->string('github_id')->nullable()->comment('Users\' github id');
         });
     }
 

@@ -5,7 +5,8 @@ import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Head, Link, router, useForm } from "@inertiajs/vue3";
+import axios from "axios";
 
 defineProps<{
 	canResetPassword?: boolean;
@@ -18,12 +19,16 @@ const form = useForm({
 	remember: false,
 });
 
-const submit = () => {
+const submit = (e: Event) => {
 	form.post(route("login"), {
 		onFinish: () => {
 			form.reset("password");
 		},
 	});
+};
+
+const socialLogin = (e: MouseEvent, option: string) => {
+	axios.get("/auth/redirect/github");
 };
 </script>
 
@@ -68,7 +73,7 @@ const submit = () => {
 
 		<div class="mt-4">
 			<p class="text-center text-sm mb-4">Or Login With</p>
-			<Link :href="route('auth.redirect', 'github')" class="block py-3 w-full text-center text-white rounded-md bg-teal-700 hover:bg-teal-600 active:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition ease-in-out duration-150">Github</Link>
+			<a :href="route('auth.redirect', 'github')" class="block py-3 w-full text-center text-white rounded-md bg-gray-700 hover:bg-gray-600 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition ease-in-out duration-150">Github</a>
 		</div>
 	</GuestLayout>
 </template>
