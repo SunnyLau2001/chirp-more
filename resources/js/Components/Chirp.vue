@@ -99,6 +99,25 @@ const handleLike = async (e: MouseEvent) => {
 
 	updatingLike.value = false;
 };
+
+const handlingFollow = ref(false);
+const handleFollow = async (e: MouseEvent) => {
+	if (props.currentUser === null) return;
+
+	handlingFollow.value = true;
+
+	try {
+		const response = await axios.post(route("userfollowing.store"), {
+			user_id: props.currentUser.id,
+			following_id: props.chirp.user_id,
+		});
+
+		console.log(response);
+	} catch {
+	} finally {
+		handlingFollow.value = false;
+	}
+};
 </script>
 
 <template>
@@ -113,6 +132,11 @@ const handleLike = async (e: MouseEvent) => {
 						<span class="text-gray-800">{{ chirp.user.name }}</span>
 						<small class="ml-2 text-sm text-gray-600">{{ dayjs(chirp.created_at).fromNow() }}</small>
 						<small v-if="chirp.created_at !== chirp.updated_at" class="text-sm text-gray-600"> &middot; edited</small>
+					</div>
+					<!-- Follow button -->
+					<div v-if="props.currentUser !== null && chirp.user.id !== $page.props.auth.user?.id" class="follow-btn">
+						<span v-if="handlingFollow">Loading</span>
+						<button v-else @click="handleFollow">Follow</button>
 					</div>
 					<Dropdown v-if="chirp.user.id === $page.props.auth.user?.id">
 						<template #trigger>

@@ -6,12 +6,9 @@ use App\Http\Controllers\PreviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\UserChirpController;
-use App\Models\Chirp;
-use App\Models\User;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\UserFollowingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +42,11 @@ Route::resource('likes', LikeController::class)
     ->middleware(['auth', 'verified']);
 
 Route::get('/mychirps', [UserChirpController::class, 'user_chirps'])->middleware(['auth', 'verified'])->name('mychirps');
+
+Route::middleware(['auth', 'verified'])->group(function() {
+    Route::post('/userfollowing', [UserFollowingController::class, 'store'])->name('userfollowing.store');
+    Route::delete('/userfollowing/{userfollowing}', [UserFollowingController::class, 'destroy'])->name('userfollowing.destroy');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
