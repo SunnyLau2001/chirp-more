@@ -17,18 +17,32 @@ class UserFollowingController extends Controller
 
         $id = (int) (strval($validated['user_id']) . strval($validated['following_id']));
 
-        $user_following = UserFollowing::create([
-            'id' => $id,
-            ...$validated
-        ]);
+        $result = UserFollowing::findOr($id, function () use ($id, $validated) {
+            return UserFollowing::create([
+                'id' => $id,
+                ...$validated
+            ]);
+        });
 
         return response()->json([
             'status' => 'success',
-            'user_following' => $user_following
+            'user_following' => $result
         ], 201);
     }
 
     public function destroy(UserFollowing $userfollowing) {
-        dd($userfollowing);
+        $result = $userfollowing->delete();
+        
+        return response()->json([
+            'status' => $result ? "success" : "failed",
+            'deleted' => $result,
+        ], 200);
+    }
+
+    public function get_user_followings(String $user_id)
+    {
+        $user_id = (int) $user_id;
+        $result = UserFollowing::where('user_id', $user_id)->get();
+        return response()->json($result);
     }
 }

@@ -8,6 +8,8 @@ import { computed } from "vue";
 import { ChirpProps } from "@/types/chirp";
 import { ref } from "vue";
 import Echo from "laravel-echo";
+import axios from "axios";
+import { followingState } from "@/Utils/store";
 
 // Injected from the ChirpController when hitting the index route.
 const props = defineProps<{
@@ -34,6 +36,11 @@ window.Echo.channel(`emit-chirp`).listen("ChirpCreated", (e: any) => {
 	const newChirp: ChirpProps = e.chirp || null;
 	if (newChirp) chirps.value.unshift(newChirp);
 });
+
+const fetchUserFollowingList = async () => {
+	followingState.updateMap(user.value.id);
+};
+fetchUserFollowingList();
 </script>
 
 <template>

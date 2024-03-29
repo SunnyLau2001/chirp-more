@@ -9,6 +9,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import axios from "axios";
 import type { ChirpProps, LikeProps } from "@/types/chirp";
+import { followingState } from "@/Utils/store";
 
 dayjs.extend(relativeTime);
 
@@ -100,11 +101,14 @@ const handleLike = async (e: MouseEvent) => {
 	updatingLike.value = false;
 };
 
-const handlingFollow = ref(false);
-const handleFollow = async (e: MouseEvent) => {
+const isHandlingFollow = ref(false);
+const suspenFollowBtn = computed(() => {
+	return isHandlingFollow.value || followingState.updating;
+});
+const followUser = async (e: MouseEvent) => {
 	if (props.currentUser === null) return;
 
-	handlingFollow.value = true;
+	isHandlingFollow.value = true;
 
 	try {
 		const response = await axios.post(route("userfollowing.store"), {
@@ -113,11 +117,39 @@ const handleFollow = async (e: MouseEvent) => {
 		});
 
 		console.log(response);
+
+		if (!response || response.data.status !== "success" || response.data.user_following === null) return;
+
+		followingState.updateMapWithNewFollow(response.data.user_following);
 	} catch {
 	} finally {
-		handlingFollow.value = false;
+		isHandlingFollow.value = false;
 	}
 };
+const unfollowUser = async () => {
+	isHandlingFollow.value = true;
+
+	if (props.currentUser === null) return;
+
+	const id = parseInt(`${props.currentUser.id}${props.chirp.user_id}`);
+
+	try {
+		const response = await axios.delete(route("userfollowing.destroy", id));
+
+		console.log(response);
+
+		if (!response || response.data.status !== "success") return;
+
+		followingState.removeFollowFromMapById(props.chirp.user_id);
+	} catch {
+	} finally {
+		isHandlingFollow.value = false;
+	}
+};
+const isFollowed = computed(() => {
+	// Depends on the state of followingMap
+	return followingState.followings[props.chirp.user_id] || null;
+});
 </script>
 
 <template>
@@ -135,8 +167,13 @@ const handleFollow = async (e: MouseEvent) => {
 					</div>
 					<!-- Follow button -->
 					<div v-if="props.currentUser !== null && chirp.user.id !== $page.props.auth.user?.id" class="follow-btn">
-						<span v-if="handlingFollow">Loading</span>
-						<button v-else @click="handleFollow">Follow</button>
+						<div v-if="suspenFollowBtn">
+							<span>Loading</span>
+						</div>
+						<div v-else>
+							<button v-if="isFollowed" @click="unfollowUser">Unfollow</button>
+							<button v-else @click="followUser">Follow</button>
+						</div>
 					</div>
 					<Dropdown v-if="chirp.user.id === $page.props.auth.user?.id">
 						<template #trigger>

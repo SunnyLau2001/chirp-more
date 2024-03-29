@@ -46,6 +46,7 @@ Route::get('/mychirps', [UserChirpController::class, 'user_chirps'])->middleware
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/userfollowing', [UserFollowingController::class, 'store'])->name('userfollowing.store');
     Route::delete('/userfollowing/{userfollowing}', [UserFollowingController::class, 'destroy'])->name('userfollowing.destroy');
+    Route::get('/userfollowing/{user_id}', [UserFollowingController::class, 'get_user_followings'])->name('userfollowing.get_user_followings');
 });
 
 Route::middleware('auth')->group(function () {
