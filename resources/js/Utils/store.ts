@@ -6,13 +6,11 @@ export interface UserFollowingProps {
 	following_id: number;
 }
 
-export type FollowingMap = Record<number, UserFollowingProps>;
-
 export const followingState = reactive({
 	/*
-	The key of the map is the user_id of the chirp!
+	Key: following_id, Value: obj
 	*/
-	followings: {} as FollowingMap,
+	followings: new Map<number, UserFollowingProps>(),
 	updating: true,
 
 	async updateMap(user_id: number) {
@@ -24,10 +22,9 @@ export const followingState = reactive({
 
 			const list = response.data as UserFollowingProps[];
 
-			this.followings = list.reduce((map, follow) => {
-				map[follow.following_id] = follow;
-				return map;
-			}, {} as FollowingMap);
+			for (const following of list) {
+				this.followings.set(following.following_id, following);
+			}
 
 			this.updating = false;
 		} catch {
@@ -37,10 +34,10 @@ export const followingState = reactive({
 	},
 
 	updateMapWithNewFollow(newFollow: UserFollowingProps) {
-		this.followings[newFollow.following_id] = newFollow;
+		this.followings.set(newFollow.following_id, newFollow);
 	},
 
 	removeFollowFromMapById(removedFollowId: number) {
-		delete this.followings[removedFollowId];
+		this.followings.delete(removedFollowId);
 	},
 });

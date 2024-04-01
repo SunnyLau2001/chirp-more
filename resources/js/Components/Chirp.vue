@@ -148,7 +148,7 @@ const unfollowUser = async () => {
 };
 const isFollowed = computed(() => {
 	// Depends on the state of followingMap
-	return followingState.followings[props.chirp.user_id] || null;
+	return followingState.followings.get(props.chirp.user_id) || null;
 });
 </script>
 
