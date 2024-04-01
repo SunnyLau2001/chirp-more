@@ -4,6 +4,10 @@ export interface UserFollowingProps {
 	id: number;
 	user_id: number;
 	following_id: number;
+	following: {
+		id: number;
+		name: string;
+	};
 }
 
 export const followingState = reactive({
@@ -21,6 +25,8 @@ export const followingState = reactive({
 			if (!response || response.data.length === 0) return;
 
 			const list = response.data as UserFollowingProps[];
+
+			console.log(list);
 
 			for (const following of list) {
 				this.followings.set(following.following_id, following);

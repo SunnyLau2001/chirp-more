@@ -18,8 +18,15 @@ class UserFollowing extends Model
         'following_id',
     ];
 
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    // The function name can be used in with() when querying
+    public function following(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'following_id');
     }
 }

@@ -42,7 +42,7 @@ class UserFollowingController extends Controller
     public function get_user_followings(String $user_id)
     {
         $user_id = (int) $user_id;
-        $result = UserFollowing::where('user_id', $user_id)->get();
+        $result = UserFollowing::with('following:id,name')->where('user_id', $user_id)->get();
         return response()->json($result);
     }
 }

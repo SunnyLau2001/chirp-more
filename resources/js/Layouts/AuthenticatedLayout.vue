@@ -5,12 +5,25 @@ import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 import FloatingButton from "@/Components/FloatingButton.vue";
+import { followingState } from "@/Utils/store";
+import { computed } from "vue";
 
 const showingNavigationDropdown = ref(false);
 
+const page = usePage();
+const user = computed(() => {
+	return {
+		id: page.props.auth.user.id,
+		name: page.props.auth.user.name,
+	};
+});
 
+const fetchUserFollowingList = async () => {
+	if (followingState.followings.size === 0) followingState.updateMap(user.value.id);
+};
+fetchUserFollowingList();
 </script>
 
 <template>

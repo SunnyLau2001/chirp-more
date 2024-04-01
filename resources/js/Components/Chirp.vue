@@ -171,7 +171,7 @@ const isFollowed = computed(() => {
 							<span>Loading</span>
 						</div>
 						<div v-else>
-							<button v-if="isFollowed" @click="unfollowUser">Unfollow</button>
+							<button v-if="isFollowed" class="underline underline-offset-2" @click="unfollowUser">Unfollow</button>
 							<button v-else @click="followUser">Follow</button>
 						</div>
 					</div>
