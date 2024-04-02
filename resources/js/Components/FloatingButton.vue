@@ -57,5 +57,5 @@ const expandMenu = ref(false);
 			</span>
 		</button>
 	</div>
-	<FollowingList v-if="showFollowingList" @show-following-list="handleShowFollowingList" />
+	<FollowingList :show-following-list="showFollowingList" @show-following-list="handleShowFollowingList" />
 </template>

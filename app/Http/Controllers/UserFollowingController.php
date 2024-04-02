@@ -22,7 +22,7 @@ class UserFollowingController extends Controller
                 'id' => $id,
                 ...$validated
             ]);
-        });
+        })->load('following:id,name');
 
         return response()->json([
             'status' => 'success',

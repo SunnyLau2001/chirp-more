@@ -4,7 +4,7 @@ export interface UserFollowingProps {
 	id: number;
 	user_id: number;
 	following_id: number;
-	following: {
+	following?: {
 		id: number;
 		name: string;
 	};

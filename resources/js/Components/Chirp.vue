@@ -146,6 +146,7 @@ const unfollowUser = async () => {
 		isHandlingFollow.value = false;
 	}
 };
+
 const isFollowed = computed(() => {
 	// Depends on the state of followingMap
 	return followingState.followings.get(props.chirp.user_id) || null;
