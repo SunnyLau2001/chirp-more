@@ -3,6 +3,7 @@ import Chirp from "@/Components/Chirp.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { ChirpProps } from "@/types/chirp";
 import { Head, usePage } from "@inertiajs/vue3";
 import { computed } from "vue";
 
@@ -16,7 +17,7 @@ const user = computed(() => {
 });
 
 const userChirps = computed(() => {
-	return page.props.chirps as any;
+	return page.props.chirps as ChirpProps[];
 });
 </script>
 
@@ -26,7 +27,7 @@ const userChirps = computed(() => {
 	<AuthenticatedLayout>
 		<div class="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
 			<div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
-				<Chirp v-for="chirp in userChirps" :key="chirp.id" :chirp="chirp" :user="user" />
+				<Chirp v-for="chirp in userChirps" :key="chirp.id" :chirp="chirp" :currentUser="user" />
 			</div>
 		</div>
 	</AuthenticatedLayout>

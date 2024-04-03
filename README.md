@@ -29,3 +29,7 @@ Create event for broadcasting the new chirp created to online user.
 ## Socialite (Social Login/ OAuth Login)
 
 Adding Github login option.
+
+## Hosting as Production through Docker
+
+Add Dockerfile and docker-compose for setup a production-like environment.
