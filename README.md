@@ -30,6 +30,6 @@ Create event for broadcasting the new chirp created to online user.
 
 Adding Github login option.
 
-## Hosting as Production through Docker
+## Hosting through Docker
 
 Add Dockerfile and docker-compose for setup a production-like environment.
