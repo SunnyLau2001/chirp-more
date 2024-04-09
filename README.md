@@ -24,7 +24,7 @@ Create a `ChirpTest` for testing the creating of chirps for users.
 
 ## Broadcasting
 
-Create event for broadcasting the new chirp created to online user.
+Create event for broadcasting to online user when new chirp created.
 
 ## Socialite (Social Login/ OAuth Login)
 
@@ -32,4 +32,4 @@ Adding Github login option.
 
 ## Hosting through Docker
 
-Add Dockerfile and docker-compose for setup a production-like environment.
+Add Dockerfile and docker-compose for setup a production-like environment for hosting Laravel through Nginx, mariaDB, and phpmyadmin.
